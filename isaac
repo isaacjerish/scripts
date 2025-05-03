@@ -9,8 +9,17 @@ typeset -A PHONEBOOK=(
   [Appa]="${NUMBERS[2]}"
   [Amma]="${NUMBERS[3]}"
 )
-
-
+changewp() {
+    thePath="$1"
+    osascript - "$thePath" <<'AS'
+        on run argv
+            set thePath to item 1 of argv
+            tell application "System Events"
+                set picture of every desktop to thePath
+            end tell
+        end run
+AS
+}
 if [[ "$1" == "code" ]]; then
 echo "Closing All Apps"
     osascript <<'APPLESCRIPT'
@@ -103,7 +112,15 @@ APPLESCRIPT
     open "https://gatech.instructure.com/"
     osascript <<'AS'
         tell application "Spotify"
-        play track "spotify:playlist:4fC8ytJHg1fU0ZzoTswuwG"
+            open location "spotify:playlist:4fC8ytJHg1fU0ZzoTswuwG"
         end tell
 AS
+fi
+if [[ "$1" == "wallpaper" ]]; then
+    if [[ "$2" == "1" ]]; then
+        changewp "$HOME/scripts/wallpaper1.jpeg"
+    fi
+    if [[ "$2" == "2" ]]; then 
+        changewp "$HOME/scripts/wallpaper2.png"
+    fi
 fi
