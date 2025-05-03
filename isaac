@@ -14,9 +14,6 @@ repeat with aName in guiApps
     end if
 end repeat
 APPLESCRIPT
-    # ------------------------------------
-
-    # launch your coding stack
     open "https://github.com/isaacjerish"
     open -a "Spotify"
     open -a "ChatGPT"
