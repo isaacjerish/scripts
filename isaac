@@ -1,9 +1,20 @@
 #!/bin/zsh
+NUM_FILE="$HOME/scripts/numbers.txt" 
+NUMBERS=()
+while IFS= read -r line; do
+    [[ $line ]] && NUMBERS+=("$line")
+done < "$NUM_FILE"
+typeset -A PHONEBOOK=(
+  [Sherlly]="${NUMBERS[1]}"
+  [Appa]="${NUMBERS[2]}"
+  [Amma]="${NUMBERS[3]}"
+)
+
 
 if [[ "$1" == "code" ]]; then
 echo "Closing All Apps"
     osascript <<'APPLESCRIPT'
-set skipList to {"Finder", "Terminal", "iTerm2"}
+set skipList to {"Finder", "Terminal", "iTerm2", "Visual Studio Code", "Spotify", "ChatGPT"}
 tell application "System Events" to set guiApps ¬
     to (name of every application process whose background only is false)
 repeat with aName in guiApps
@@ -24,5 +35,31 @@ APPLESCRIPT
 fi
 
 if [[ "$1" == "text" ]]; then
-echo "Texting $2: $3"
+    contact_key="$2"
+    message="$3"
+    service_id="${NUMBERS[4]}"
+    [[ -z $contact_key || -z $message ]] && {
+        echo "Usage: isaac text <name|number> <message>"; exit 1;
+    }
+
+    contact_handle=${PHONEBOOK[$contact_key]:-$contact_key}
+
+    echo "Texting $contact_handle: $message"
+
+    osascript - "$contact_handle" "$message" "$service_id" <<'APPLESCRIPT'
+on run argv
+    set theContact to item 1 of argv
+    set theMessage to item 2 of argv
+    set theServiceID to item 3 of argv
+    tell application "Messages"
+        set targetService to service id theServiceID
+        try
+            set targetBuddy to buddy theContact of targetService
+        on error
+            error "No buddy found for " & theContact
+        end try
+        send theMessage to targetBuddy
+    end tell
+end run
+APPLESCRIPT
 fi
