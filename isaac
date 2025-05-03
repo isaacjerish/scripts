@@ -1,0 +1,24 @@
+#!/bin/zsh
+
+if [[ "$1" == "code" ]]; then
+    osascript <<'APPLESCRIPT'
+set skipList to {"Finder", "Terminal", "iTerm2"}
+tell application "System Events" to set guiApps ¬
+    to (name of every application process whose background only is false)
+repeat with aName in guiApps
+    set aName to aName as text
+    if skipList does not contain aName then
+        try
+            tell application aName to quit 
+        end try
+    end if
+end repeat
+APPLESCRIPT
+    # ------------------------------------
+
+    # launch your coding stack
+    open "https://github.com/isaacjerish"
+    open -a "Spotify"
+    open -a "ChatGPT"
+    open -a "Visual Studio Code"
+fi
