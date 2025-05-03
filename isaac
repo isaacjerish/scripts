@@ -101,4 +101,9 @@ APPLESCRIPT
     open -a "ChatGPT"
     open -a "Spotify"
     open "https://gatech.instructure.com/"
+    osascript <<'AS'
+        tell application "Spotify"
+        play track "spotify:playlist:4fC8ytJHg1fU0ZzoTswuwG"
+        end tell
+AS
 fi
