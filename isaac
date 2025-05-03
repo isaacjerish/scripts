@@ -1,6 +1,5 @@
 #!/bin/zsh
-
-if [[ "$1" == "code" ]]; then
+echo "Closing All Apps"
     osascript <<'APPLESCRIPT'
 set skipList to {"Finder", "Terminal", "iTerm2"}
 tell application "System Events" to set guiApps ¬
@@ -14,8 +13,12 @@ repeat with aName in guiApps
     end if
 end repeat
 APPLESCRIPT
+if [[ "$1" == "code" ]]; then
+    sleep 2
+    echo "Opening Github"
     open "https://github.com/isaacjerish"
+    echo "Opening Spotify"
     open -a "Spotify"
-    open -a "ChatGPT"
+    echo "Opening VS Code"
     open -a "Visual Studio Code"
 fi
