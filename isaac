@@ -79,4 +79,8 @@ repeat with aName in guiApps
     end if
 end repeat
 APPLESCRIPT
+osascript <<'APPLESCRIPT'
+    tell application "Visual Studio Code" to quit
+    tell application "Terminal" to quit
+APPLESCRIPT
 fi
