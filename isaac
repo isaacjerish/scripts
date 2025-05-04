@@ -1,14 +1,20 @@
 #!/bin/zsh
-NUM_FILE="$HOME/scripts/numbers.txt" 
+
+# Load numbers from file into array
+NUM_FILE="$HOME/scripts/numbers.txt"
 NUMBERS=()
 while IFS= read -r line; do
     [[ $line ]] && NUMBERS+=("$line")
 done < "$NUM_FILE"
+
+# Create an associative array mapping names to numbers
 typeset -A PHONEBOOK=(
   [Sherlly]="${NUMBERS[1]}"
   [Appa]="${NUMBERS[2]}"
   [Amma]="${NUMBERS[3]}"
 )
+
+# Define a function to change the desktop wallpaper using AppleScript
 changewp() {
     thePath="$1"
     osascript - "$thePath" <<'AS'
@@ -20,21 +26,26 @@ changewp() {
         end run
 AS
 }
+
+
+# CODE MODE
 if [[ "$1" == "code" ]]; then
-echo "Closing All Apps"
+    echo "Closing All Apps"
+    #  Quit all visible apps except for ones in skipList
     osascript <<'APPLESCRIPT'
 set skipList to {"Finder", "Terminal", "iTerm2", "Visual Studio Code", "Spotify", "ChatGPT"}
-tell application "System Events" to set guiApps ¬
-    to (name of every application process whose background only is false)
+tell application "System Events" to set guiApps to (name of every application process whose background only is false)
 repeat with aName in guiApps
     set aName to aName as text
     if skipList does not contain aName then
         try
-            tell application aName to quit 
+            tell application aName to quit
         end try
     end if
 end repeat
 APPLESCRIPT
+
+    # Open development tools
     echo "Opening Github"
     open "https://github.com/isaacjerish"
     echo "Opening Spotify"
@@ -43,18 +54,26 @@ APPLESCRIPT
     open -a "Visual Studio Code"
 fi
 
+
+# TEXT MODE
+
 if [[ "$1" == "text" ]]; then
     contact_key="$2"
     message="$3"
     service_id="${NUMBERS[4]}"
+
+    # Ensure proper usage
     [[ -z $contact_key || -z $message ]] && {
-        echo "Usage: isaac text <name|number> <message>"; exit 1;
+        echo "Usage: isaac text <name|number> <message>"
+        exit 1
     }
 
+    # Resolve contact handle (name -> number)
     contact_handle=${PHONEBOOK[$contact_key]:-$contact_key}
 
     echo "Texting $contact_handle: $message"
 
+    # Send iMessage using AppleScript
     osascript - "$contact_handle" "$message" "$service_id" <<'APPLESCRIPT'
 on run argv
     set theContact to item 1 of argv
@@ -73,54 +92,68 @@ end run
 APPLESCRIPT
 fi
 
+
+# CLEAN MODE
 if [[ "$1" == "clean" ]]; then
-echo "Closing All Apps"
+    echo "Closing All Apps"
+    # Close all apps except system ones
     osascript <<'APPLESCRIPT'
 set skipList to {"Finder", "iTerm2", "Terminal"}
-tell application "System Events" to set guiApps ¬
-    to (name of every application process whose background only is false)
+tell application "System Events" to set guiApps to (name of every application process whose background only is false)
 repeat with aName in guiApps
     set aName to aName as text
     if skipList does not contain aName then
         try
-            tell application aName to quit 
+            tell application aName to quit
         end try
     end if
 end repeat
 APPLESCRIPT
-osascript <<'APPLESCRIPT'
-    tell application "Visual Studio Code" to quit
-    tell application "Terminal" to quit
+
+    # Specifically quit VS Code and Terminal
+    osascript <<'APPLESCRIPT'
+tell application "Visual Studio Code" to quit
+tell application "Terminal" to quit
 APPLESCRIPT
 fi
+
+
+# STUDY MODE
 if [[ "$1" == "study" ]]; then
+    # Close all GUI apps except terminal
     osascript <<'APPLESCRIPT'
 set skipList to {"Finder", "iTerm2", "Terminal"}
-tell application "System Events" to set guiApps ¬
-    to (name of every application process whose background only is false)
+tell application "System Events" to set guiApps to (name of every application process whose background only is false)
 repeat with aName in guiApps
     set aName to aName as text
     if skipList does not contain aName then
         try
-            tell application aName to quit 
+            tell application aName to quit
         end try
     end if
 end repeat
 APPLESCRIPT
+
+    # Open study tools
     open -a "ChatGPT"
     open -a "Spotify"
     open "https://gatech.instructure.com/"
+
+    # Play custom Spotify playlist
     osascript <<'AS'
         tell application "Spotify"
             open location "spotify:playlist:4fC8ytJHg1fU0ZzoTswuwG"
         end tell
 AS
 fi
+
+
+# WALLPAPER SWITCHER
 if [[ "$1" == "wallpaper" ]]; then
     if [[ "$2" == "1" ]]; then
         changewp "$HOME/scripts/wallpaper1.jpeg"
     fi
     if [[ "$2" == "2" ]]; then 
-        changewp "$HOME/scripts/wallpaper2.png"
+        changewp "$HOME/scripts/wallpaper2.jpg"
     fi
 fi

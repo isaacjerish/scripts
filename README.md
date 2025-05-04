@@ -1,27 +1,41 @@
-# isaac — personal CLI assistant
+# isaac — Personalized Mac Automation CLI
 
-Tiny Zsh script that flips your Mac into preset modes with a single command.
-
-## Features
-
-| Command | What it does (default behavior) |
-|---------|---------------------------------|
-| `isaac code` | *Wipes distractions*, launches your coding stack (VS Code, GitHub tab, Spotify coding playlist). |
-| `isaac study` | Quits social / entertainment apps, opens Obsidian (notes), your course site, PDF viewer, and sets Do Not Disturb. |
-| `isaac text <contact> "<message>"` | Fires an iMessage or SMS via AppleScript. Great for quick “running late” pings from the terminal. |
-
-Everything is just shell + AppleScript, so tweak any app / URL list you like.
+This Zsh script acts as a custom command-line automation tool designed to streamline Isaac's workflow. It supports launching coding environments, study sessions, message sending, system cleanup, and wallpaper changes all from a single terminal command.
 
 ---
 
-## Quick install
+## Features
 
-```bash
-# 1. Clone or copy the script
-mkdir -p ~/scripts
-cp isaac ~/scripts/isaac
-chmod +x ~/scripts/isaac
+### `isaac code`
+- Closes all unnecessary applications
+- Opens:
+  - GitHub in browser
+  - Spotify
+  - Visual Studio Code
 
-# 2. Add that folder to your PATH (once)
-echo 'export PATH="$HOME/scripts:$PATH"' >> ~/.zshrc
-source ~/.zshrc
+### `isaac study`
+- Closes all apps except terminal-related ones
+- Opens:
+  - ChatGPT desktop app
+  - Spotify
+  - Georgia Tech Canvas in browser
+  - Plays a custom Spotify playlist
+
+### `isaac text <name> "<message>"`
+- Sends an iMessage to a contact (via AppleScript)
+- Uses a local `numbers.txt` file to map contact names to phone numbers
+- Gracefully handles fallback if name not found
+
+### `isaac clean`
+- Closes all GUI applications except a few whitelisted ones
+- Force-quits Terminal and Visual Studio Code
+
+### `isaac wallpaper <1|2>`
+- Changes the system wallpaper to a preset image
+
+---
+
+##  File Structure
+
+- `isaac` — The main script (make this executable)
+- `numbers.txt` — Phone numbers and iMessage service ID (not committed to Git)
