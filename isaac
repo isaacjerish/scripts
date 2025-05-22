@@ -98,7 +98,7 @@ if [[ "$1" == "clean" ]]; then
     echo "Closing All Apps"
     # Close all apps except system ones
     osascript <<'APPLESCRIPT'
-set skipList to {"Finder", "iTerm2", "Terminal"}
+set skipList to {"Finder", "iTerm2", "Terminal", "AlDente"}
 tell application "System Events" to set guiApps to (name of every application process whose background only is false)
 repeat with aName in guiApps
     set aName to aName as text
